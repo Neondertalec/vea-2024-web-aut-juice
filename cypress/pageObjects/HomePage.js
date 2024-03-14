@@ -16,6 +16,15 @@ export class HomePage extends BasePage {
   static get accountButton(){
     return cy.get("button#navbarAccount");
   }
+  static get ordersButton(){
+    return cy.get(`[aria-label="Show Orders and Payment Menu"][role="menuitem"]`);
+  }
+  static get savedAddressed(){
+    return cy.get(`[aria-label="Go to saved address page"]`);
+  }
+  static get savedPayments(){
+    return cy.get(`[aria-label="Go to saved payment methods page"]`);
+  }
 
   static get loginButton(){
     return cy.get("button#navbarLoginButton");

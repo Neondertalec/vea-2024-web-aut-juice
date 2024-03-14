@@ -1,6 +1,7 @@
 /// <reference types="Cypress" />
 
 import { BasketPage } from "../pageObjects/BasketPage";
+import { CreateAddressPage } from "../pageObjects/CreateAddressPage";
 import { DeliveryMethodPage } from "../pageObjects/DeliveryMethodPage";
 import { HomePage } from "../pageObjects/HomePage";
 import { LoginPage } from "../pageObjects/LoginPage";
@@ -8,6 +9,8 @@ import { OrderCompletionPage } from "../pageObjects/OrderCompletionPage";
 import { OrderSummaryPage } from "../pageObjects/OrderSummaryPage";
 import { PaymentOptionsPage } from "../pageObjects/PaymentOptionsPage";
 import { RegisterPage } from "../pageObjects/RegisterPage";
+import { SavedAddressesPage } from "../pageObjects/SavedAddressesPage";
+import { SavedPaymentMethodsPage } from "../pageObjects/SavedPaymentMethodsPage";
 import { SelectAddressPage } from "../pageObjects/SelectAddressPage";
 
 describe("Juice-shop scenarios", () => {
@@ -183,7 +186,7 @@ describe("Juice-shop scenarios", () => {
     });
 
     // Create scenario - Buy Girlie T-shirt
-    it.only("Buy Girlie T-shirt", () => {
+    it("Buy Girlie T-shirt", () => {
       // Click on search icon
       HomePage.searchQuery.click();
       // Search for Girlie
@@ -207,7 +210,7 @@ describe("Juice-shop scenarios", () => {
       DeliveryMethodPage.continueButton.click();
       // Create page object - PaymentOptionsPage
       // Select card that ends with "5678"
-      PaymentOptionsPage.paymentOptions.filter(`:contains('************5678')`).get(`.mat-radio-button`).click();
+      PaymentOptionsPage.paymentOptions.filter(`:contains('************5678')`).find(`.mat-radio-button`).click();
       // Click Continue button
       PaymentOptionsPage.continueButton.click();
       // Create page object - OrderSummaryPage
@@ -217,28 +220,58 @@ describe("Juice-shop scenarios", () => {
       // Validate confirmation - "Thank you for your purchase!"
       OrderCompletionPage.title.should("contain.text", "Thank you for your purchase!")
     });
+
     // Create scenario - Add address
-    // Click on Account
-    // Click on Orders & Payment
-    // Click on My saved addresses
-    // Create page object - SavedAddressesPage
-    // Click on Add New Address
-    // Create page object - CreateAddressPage
-    // Fill in the necessary information
-    // Click Submit button
-    // Validate that previously added address is visible
+    it("Add address", () => {
+      // Click on Account
+      HomePage.accountButton.click();
+      // Click on Orders & Payment
+      HomePage.ordersButton.click();
+      // Click on My saved addresses
+      HomePage.savedAddressed.click();
+      // Create page object - SavedAddressesPage
+      // Click on Add New Address
+      SavedAddressesPage.addButton.click();
+      // Create page object - CreateAddressPage
+      // Fill in the necessary information
+      CreateAddressPage.country.type("Latvia");
+      const name = "Some name here " + Math.round(Math.random()*1000);
+      CreateAddressPage.name.type(name);
+      CreateAddressPage.mobileNumber.type("371" + Math.round(Math.random()*9999999+1000000));
+      CreateAddressPage.zipCode.type("LV-" + Math.round(Math.random()*9999+1000));
+      CreateAddressPage.address.type("Kkur " + Math.round(Math.random()*99) + ", Kk " + Math.round(Math.random()*99));
+      CreateAddressPage.city.type(["Ventspils", "Liepāja", "Tukums", "Jelgava", "Valmiera", "Daugavpils"][Math.round(Math.random()*5)]);
+      CreateAddressPage.submitButton.click();
+      
+      // Click Submit button
+      // Validate that previously added address is visible
+      SavedAddressesPage.addressed.filter(`:contains('${name}')`).should("exist");
+    });
 
     // Create scenario - Add payment option
-    // Click on Account
-    // Click on Orders & Payment
-    // Click on My payment options
-    // Create page object - SavedPaymentMethodsPage
-    // Click Add new card
-    // Fill in Name
-    // Fill in Card Number
-    // Set expiry month to 7
-    // Set expiry year to 2090
-    // Click Submit button
-    // Validate that the card shows up in the list
+    it("Add payment option", () => {
+      // Click on Account
+      HomePage.accountButton.click();
+      // Click on Orders & Payment
+      HomePage.ordersButton.click();
+      // Click on My payment options
+      HomePage.savedPayments.click();
+      // Create page object - SavedPaymentMethodsPage
+      // Click Add new card
+      SavedPaymentMethodsPage.addDrop.click();
+      // Fill in Name
+      const name = "Some name here " + Math.round(Math.random()*1000);
+      SavedPaymentMethodsPage.addName.type(name);
+      // Fill in Card Number
+      SavedPaymentMethodsPage.addCardNumber.type(Math.round(Math.random()*(9999**4) + (10000**4/10)));
+      // Set expiry month to 7
+      SavedPaymentMethodsPage.addExpireMonth.select(6);
+      // Set expiry year to 2090
+      SavedPaymentMethodsPage.addExpireYear.select(10);
+      // Click Submit button
+      SavedPaymentMethodsPage.submitButton.click();
+      // Validate that the card shows up in the list
+      SavedPaymentMethodsPage.cards.filter(`:contains('${name}')`).should("exist");
+    });
   });
 });
