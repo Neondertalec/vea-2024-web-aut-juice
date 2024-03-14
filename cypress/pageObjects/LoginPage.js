@@ -5,7 +5,16 @@ export class LoginPage extends BasePage {
     return "/#/login";
   }
 
-  static get elementName() {
-    return cy.get("elementSelector");
+  static get emailInput() {
+    return cy.get("input#email");
+  }
+  static get passwordInput() {
+    return cy.get("input#password");
+  }
+  static get loginButton() {
+    return cy.get("#loginButton");
+  }
+  static get toRegisterLink() {
+    return cy.get("#newCustomerLink a");
   }
 }
