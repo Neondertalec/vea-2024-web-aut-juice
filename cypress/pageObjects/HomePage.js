@@ -57,12 +57,17 @@ export class HomePage extends BasePage {
   static get overlay(){
     return cy.get(`.cdk-overlay-container .cdk-overlay-backdrop`);
   }
-  
   static get itemsperPage(){
     return cy.get(`mat-select[aria-label="Items per page:"]`);
   }
   static get itemsperPageOption(){
     return cy.get(`#mat-select-0-panel mat-option`);
+  }
+  static get addToBasket(){
+    return cy.get(`[aria-label="Add to Basket"]`);
+  }
+  static get basketButton(){
+    return cy.get(`button[aria-label="Show the shopping cart"]`);
   }
 
 }
