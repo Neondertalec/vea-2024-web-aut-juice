@@ -21,7 +21,7 @@ export class RegisterPage extends BasePage {
     return cy.get("#newCustomerLink a");
   }
   static get securityContainer() {
-    return cy.get(".security-container > * > * > .mat-form-field-flex.ng-tns-c22-16");
+    return cy.get(`.security-container [name="securityQuestion"]`);
   }
   static get petOption() {
     return cy.get("#mat-option-9");

@@ -29,7 +29,7 @@ describe("Juice-shop scenarios", () => {
       HomePage.accountName.should("have.text", " demo ");
     });
 
-    it.only("Registration", () => {
+    it("Registration", () => {
       // Click Account button
       HomePage.accountButton.click();
       // Login button
@@ -67,7 +67,7 @@ describe("Juice-shop scenarios", () => {
     });
   });
 
-  context("With auto login", () => {
+  context.only("With auto login", () => {
     beforeEach(() => {
       cy.login("demo", "demo");
       HomePage.visit();
@@ -75,51 +75,106 @@ describe("Juice-shop scenarios", () => {
 
     it("Search and validate Lemon", () => {
       // Click on search icon
+      HomePage.searchQuery.click();
       // Search for Lemon
+      HomePage.searchQueryText.type("Lemon{enter}");
       // Select a product card - Lemon Juice (500ml)
+      HomePage.selectCards.filter(":contains('Lemon Juice (500ml)')").click();
       // Validate that the card (should) contains "Sour but full of vitamins."
+      HomePage.dialogContainer.should("contain.text", 'Sour but full of vitamins.');
     });
 
     // Create scenario - Search 500ml and validate Lemon, while having multiple cards
-    // Click on search icon
-    // Search for 500ml
-    // Select a product card - Lemon Juice (500ml)
-    // Validate that the card (should) contains "Sour but full of vitamins."
+    it("Search 500ml and validate Lemon, while having multiple cards", () => {
+      // Click on search icon
+      HomePage.searchQuery.click();
+      // Search for 500ml
+      HomePage.searchQueryText.type("500ml{enter}");
+      // Select a product card - Lemon Juice (500ml)
+      HomePage.selectCards.filter(":contains('Lemon Juice (500ml)')").click();
+      // Validate that the card (should) contains "Sour but full of vitamins."
+      HomePage.dialogContainer.should("contain.text", 'Sour but full of vitamins.');
+    });
 
     // Create scenario - Search 500ml and validate cards
-    // Click on search icon
-    // Search for 500ml
-    // Select a product card - Eggfruit Juice (500ml)
-    // Validate that the card (should) contains "Now with even more exotic flavour."
-    // Close the card
-    // Select a product card - Lemon Juice (500ml)
-    // Validate that the card (should) contains "Sour but full of vitamins."
-    // Close the card
-    // Select a product card - Strawberry Juice (500ml)
-    // Validate that the card (should) contains "Sweet & tasty!"
+    it("Search 500ml and validate cards", () => {
+      // Click on search icon
+      HomePage.searchQuery.click();
+      // Search for 500ml
+      HomePage.searchQueryText.type("500ml{enter}");
+      // Select a product card - Eggfruit Juice (500ml)
+      HomePage.selectCards.filter(":contains('Eggfruit Juice (500ml)')").click();
+      // Validate that the card (should) contains "Now with even more exotic flavour."
+      HomePage.dialogContainer.should("contain.text", 'Now with even more exotic flavour.');
+      
+      // Close the card
+      HomePage.overlay.click({force: true});
+      // Select a product card - Lemon Juice (500ml)
+      HomePage.selectCards.filter(":contains('Lemon Juice (500ml)')").click();
+      // Validate that the card (should) contains "Sour but full of vitamins."
+      HomePage.dialogContainer.should("contain.text", 'Sour but full of vitamins.');
 
+      // Close the card
+      HomePage.overlay.click({force: true});
+      // Select a product card - Strawberry Juice (500ml)
+      HomePage.selectCards.filter(":contains('Strawberry Juice (500ml)')").click();
+      // Validate that the card (should) contains "Sweet & tasty!"
+      HomePage.dialogContainer.should("contain.text", 'Sweet & tasty!');
+    });
+    
+    
     // Create scenario - Read a review
-    // Click on search icon
-    // Search for King
-    // Select a product card - OWASP Juice Shop "King of the Hill" Facemask
-    // Click expand reviews button/icon (wait for reviews to appear)
-    // Validate review - K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!
+    it("Read a review", () => {
+      // Click on search icon
+      HomePage.searchQuery.click();
+      // Search for King
+      HomePage.searchQueryText.type("King{enter}");
+      // Select a product card - OWASP Juice Shop "King of the Hill" Facemask
+      HomePage.selectCards.filter(`:contains('OWASP Juice Shop "King of the Hill" Facemask')`).click();
+      // Click expand reviews button/icon (wait for reviews to appear)"
+      cy.wait(300);
+      HomePage.reviews.click();
+      // Validate review - K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!
+      HomePage.comments.filter(`:contains('K33p5 y0ur ju1cy 5plu773r 70 y0ur53lf!')`).should("exist");
+    });
+
 
     // Create scenario - Add a review
-    // Click on search icon
-    // Search for Raspberry
-    // Select a product card - Raspberry Juice (1000ml)
-    // Type in review - "Tastes like metal"
-    // Click Submit
-    // Click expand reviews button/icon (wait for reviews to appear)
-    // Validate review -  "Tastes like metal"
+    it("Add a review", () => {
+      // Click on search icon
+      HomePage.searchQuery.click();
+      // Search for Raspberry
+      HomePage.searchQueryText.type("Raspberry{enter}");
+      // Select a product card - Raspberry Juice (1000ml)
+      HomePage.selectCards.filter(`:contains('Raspberry Juice (1000ml)')`).click();
+      // Type in review - "Tastes like metal"
+      HomePage.reviewInput.click();
+      cy.wait(150);
+      HomePage.reviewInput.type("Tastes like metal");
+      // Click Submit
+      HomePage.submitReviewInput.click();
+      // Click expand reviews button/icon (wait for reviews to appeWar)
+      cy.wait(300);
+      HomePage.reviews.click();
+      // Validate review -  "Tastes like metal"
+      HomePage.comments.filter(`:contains('Tastes like metal')`).should("exist");
+    });
 
     // Create scenario - Validate product card amount
-    // Validate that the default amount of cards is 12
-    // Change items per page (at the bottom of page) to 24
-    // Validate that the amount of cards is 24
-    // Change items per page (at the bottom of page) to 36
-    // Validate that the amount of cards is 35
+    it("Validate product card amount", () => {
+      // Validate that the default amount of cards is 12
+      HomePage.selectCards.should("have.length", 12);
+      // Change items per page (at the bottom of page) to 24
+      HomePage.itemsperPage.click();
+      HomePage.itemsperPageOption.filter(`:contains('24')`).click();
+      // Validate that the amount of cards is 24
+      HomePage.selectCards.should("have.length", 24);
+      // Change items per page (at the bottom of page) to 36
+      HomePage.itemsperPage.click();
+      HomePage.itemsperPageOption.filter(`:contains('36')`).click();
+      // Validate that the amount of cards is 35
+      HomePage.selectCards.should("have.length", 35);
+    });
 
     // Create scenario - Buy Girlie T-shirt
     // Click on search icon
